@@ -1,0 +1,14 @@
+{
+  "name": "kolb-local",
+  "description": "Marketplace local do Kolb — plugin de modo aprendizado para o Claude Code.",
+  "owner": {
+    "name": "alexpatri"
+  },
+  "plugins": [
+    {
+      "name": "kolb",
+      "source": "./plugins/kolb",
+      "description": "Modo aprendizado para Claude Code — ciclo de Kolb, bloqueio de geração e tutor isolado."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "kolb",
+  "description": "Kolb põe o Claude Code em modo aprendizado: orienta socraticamente em vez de gerar código, utilizando o ciclo de Kolb (CE→RO→AC→AE).",
+  "version": "0.1.0",
+  "author": {
+    "name": "alexpatri",
+    "email": "jalexsandro2005@gmail.com"
+  }
+}
