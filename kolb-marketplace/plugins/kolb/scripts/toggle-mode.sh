@@ -18,11 +18,13 @@ _kolb_common="${CLAUDE_PLUGIN_ROOT:-$_kolb_self_dir/..}/scripts/_common.sh"
 . "$_kolb_common"
 
 # Valida o argumento: exatamente on|off; qualquer outro ⇒ uso legível + exit 0.
+# A justificativa (2º arg) só é usada no `off`, onde é obrigatória (FR2); `on` a ignora.
 action="${1:-}"
+justification="${2:-}"
 case "$action" in
   on|off) ;;
   *)
-    printf '%s\n' "uso: toggle-mode.sh on|off"
+    printf '%s\n' 'uso: toggle-mode.sh on | off "<justificativa de uma linha>"'
     exit 0
     ;;
 esac
@@ -91,16 +93,79 @@ if [ "$action" = "on" ]; then
   exit 0
 fi
 
-# action = off — remove o flag se existir; senão, no-op silencioso (sem erro).
-# NÃO escreve exit-log nem emite evento mode_off aqui: isso é da história 1.3.
-if [ -f "$flag" ]; then
-  if rm -f "$flag" 2>/dev/null; then
-    printf '%s\n' "Kolb: modo aprendizado DESATIVADO nesta sessão."
-  else
-    kolb_log_error "toggle-mode: falha ao remover o flag $flag."
-    printf '%s\n' "Kolb: não consegui desativar o modo (falha ao remover o estado)."
-  fi
-else
+# action = off — desativação auditada com justificativa obrigatória (FR2).
+#
+# Idempotência (AC#5, NFR6): flag ausente ⇒ no-op silencioso, SEM exigir
+# justificativa — não há modo a encerrar.
+if [ ! -f "$flag" ]; then
   printf '%s\n' "Kolb: modo aprendizado já estava inativo nesta sessão."
+  exit 0
+fi
+
+# Flag presente: exige justificativa de uma linha. Normaliza CR/LF em espaço para
+# garantir "uma linha" no exit-log (NFR18) e detecta justificativa só-branca.
+justification=$(printf '%s' "$justification" | tr '\r\n' '  ')
+_just_trimmed=$(printf '%s' "$justification" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+if [ -z "$_just_trimmed" ]; then
+  # Tom socrático (NFR23): ≤3 linhas, termina pedindo ação. O modo permanece ATIVO.
+  printf '%s\n' "Kolb: a desativação exige um motivo de uma linha. Por que sair do modo agora?"
+  printf '%s\n' 'Use: /kolb:learn-mode off "<seu motivo>" — o modo continua ATIVO até registrá-lo.'
+  exit 0
+fi
+
+# Desativação efetiva: remove o flag PRIMEIRO. Invariante de auditoria (resolve a
+# verificação aberta #1 da story): uma linha no exit-log existe se e somente se a
+# desativação ocorreu — evita "log fantasma" caso o rm falhe. A janela "off sem
+# motivo gravado" é desprezível (script sequencial, single-user).
+if ! rm -f "$flag" 2>/dev/null; then
+  kolb_log_error "toggle-mode: falha ao remover o flag $flag."
+  printf '%s\n' "Kolb: não consegui desativar o modo (falha ao remover o estado). Nada foi registrado."
+  exit 0
+fi
+
+# A partir daqui o modo está OFF. A auditoria abaixo é best-effort (NFR9): qualquer
+# falha de FS é registrada em hook-errors.log e o script segue/sai com exit 0.
+exitlog="$base/.kolb/exit-log.md"
+
+# Cria o exit-log do template pré-preenchido se ausente (FR40). O template é
+# read-only no plugin; copiamos para .kolb/ (durável). Fallback: cabeçalho mínimo.
+if [ ! -f "$exitlog" ]; then
+  _kolb_tpl="${CLAUDE_PLUGIN_ROOT:-$_kolb_self_dir/..}/templates/exit-log.md"
+  [ -f "$_kolb_tpl" ] || _kolb_tpl="$_kolb_self_dir/../templates/exit-log.md"
+  if [ -f "$_kolb_tpl" ]; then
+    cp "$_kolb_tpl" "$exitlog" 2>/dev/null || \
+      kolb_log_error "toggle-mode: falha ao copiar template exit-log para $exitlog."
+  fi
+  # Se ainda não existe (template ausente ou cp falhou), grava um cabeçalho mínimo.
+  if [ ! -f "$exitlog" ]; then
+    {
+      printf '%s\n\n' "# Kolb — Exit Log"
+      printf '%s\n' "Registro auditável das desativações do modo aprendizado (uma linha por saída)."
+      printf '%s\n\n' 'Formato: `<timestamp ISO 8601> | session <session_id> | off | "<justificativa de uma linha>"`'
+    } > "$exitlog" 2>/dev/null || \
+      kolb_log_error "toggle-mode: falha ao criar exit-log mínimo em $exitlog."
+  fi
+fi
+
+# Anexa a linha de auditoria (append puro, legível a olho nu — NFR18/NFR19).
+# Rastreia o sucesso do append para não superdeclarar o registro na mensagem final.
+if printf '%s | session %s | off | "%s"\n' "$(kolb_ts)" "$sid" "$justification" >> "$exitlog" 2>/dev/null; then
+  _exitlog_ok=1
+else
+  _exitlog_ok=0
+  kolb_log_error "toggle-mode: modo desativado, mas falha ao anexar linha em $exitlog."
+fi
+
+# Evento mode_off em sessions.jsonl (event-sourced, append-only). A justificativa
+# NÃO entra aqui: o schema de evento é fixo {ts,sid,event,mode} e o motivo legível
+# vive no exit-log — mantém o JSONL montável por printf, sem jq nem escape.
+printf '{"ts":"%s","sid":"%s","event":"mode_off","mode":"learn"}\n' "$(kolb_ts)" "$sid" >> "$sessions" 2>/dev/null || \
+  kolb_log_error "toggle-mode: modo desativado, mas falha ao anexar evento mode_off em $sessions."
+
+# Mensagem final honesta: só afirma "registrado" se o append ao exit-log teve êxito.
+if [ "$_exitlog_ok" = 1 ]; then
+  printf '%s\n' "Kolb: modo aprendizado DESATIVADO nesta sessão. Motivo registrado no exit-log."
+else
+  printf '%s\n' "Kolb: modo aprendizado DESATIVADO nesta sessão (falha ao registrar o motivo — ver .kolb/runtime/hook-errors.log)."
 fi
 exit 0
