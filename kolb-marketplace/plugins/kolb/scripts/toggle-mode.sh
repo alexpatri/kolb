@@ -84,9 +84,17 @@ if [ "$action" = "on" ]; then
     printf '%s\n' "Kolb: não consegui ativar o modo (falha ao gravar o estado). Nada foi alterado."
     exit 0
   fi
-  # Evento append-only em .kolb/sessions.jsonl (durável). Sem jq — sid é UUID.
-  # Se o append falhar, o flag (fonte de verdade do gating) já está posto e o modo
+  # Eventos append-only em .kolb/sessions.jsonl (durável). Sem jq — sid é UUID.
+  # Se um append falhar, o flag (fonte de verdade do gating) já está posto e o modo
   # funciona; registramos a lacuna de auditoria em vez de abortar sob set -e.
+  #
+  # session_start ANTES de mode_on: este é o único ponto que sabe que o modo está
+  # sendo *entrado* numa sessão genuína (o hook SessionStart é gated e, numa sessão
+  # nova, o flag ainda não existe). Sem dedup: numa sessão on→off→on o 2º on emite
+  # outro session_start, e o fold (session-status.sh) toma o ts mínimo por sid —
+  # tolerar multiplicidade é mais barato que pagar um grep no hot-path (NFR3).
+  printf '{"ts":"%s","sid":"%s","event":"session_start","mode":"learn"}\n' "$(kolb_ts)" "$sid" >> "$sessions" 2>/dev/null || \
+    kolb_log_error "toggle-mode: flag criado, mas falha ao anexar evento session_start em $sessions."
   printf '{"ts":"%s","sid":"%s","event":"mode_on","mode":"learn"}\n' "$(kolb_ts)" "$sid" >> "$sessions" 2>/dev/null || \
     kolb_log_error "toggle-mode: flag criado, mas falha ao anexar evento mode_on em $sessions."
   printf '%s\n' "Kolb: modo aprendizado ATIVADO nesta sessão."
@@ -103,8 +111,11 @@ if [ ! -f "$flag" ]; then
 fi
 
 # Flag presente: exige justificativa de uma linha. Normaliza CR/LF em espaço para
-# garantir "uma linha" no exit-log (NFR18) e detecta justificativa só-branca.
-justification=$(printf '%s' "$justification" | tr '\r\n' '  ')
+# garantir "uma linha" no exit-log (NFR18) e detecta justificativa só-branca. Também
+# neutraliza os delimitadores do formato auditável — `|` (separador de colunas) vira
+# `/` e `"` (aspas do campo) vira `'` — para que texto livre do usuário não quebre a
+# linha `<ts> | session <sid> | off | "<just>"` nem forje colunas/aspas.
+justification=$(printf '%s' "$justification" | tr '\r\n|"' "  /'")
 _just_trimmed=$(printf '%s' "$justification" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
 if [ -z "$_just_trimmed" ]; then
   # Tom socrático (NFR23): ≤3 linhas, termina pedindo ação. O modo permanece ATIVO.

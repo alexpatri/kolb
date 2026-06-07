@@ -19,9 +19,11 @@ kolb_project_dir() {
   printf '%s' "${CLAUDE_PROJECT_DIR:-}"
 }
 
-# Timestamp ISO 8601 com timezone (NFR19).
+# Timestamp ISO 8601 com timezone (NFR19). `date +%z` emite o offset SEM dois-pontos
+# (`-0300`) em GNU e BSD; o sed insere o `:` antes dos 2 últimos dígitos para produzir
+# o formato RFC 3339 com colon (`-03:00`), consistente com os templates e o exit-log.
 kolb_ts() {
-  date +%Y-%m-%dT%H:%M:%S%z
+  date +%Y-%m-%dT%H:%M:%S%z | sed 's/\([0-9][0-9]\)$/:\1/'
 }
 
 # Registra uma mensagem de erro em .kolb/runtime/hook-errors.log e NUNCA propaga
