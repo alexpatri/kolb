@@ -26,6 +26,24 @@ kolb_ts() {
   date +%Y-%m-%dT%H:%M:%S%z | sed 's/\([0-9][0-9]\)$/:\1/'
 }
 
+# slugify(topic) determinístico (AR-Naming): recebe o título em $1 e emite o slug
+# usado como nome de arquivo da nota AC (.kolb/notes/<slug>.md). Regra: minúsculas,
+# runs de qualquer caractere fora de [a-z0-9] viram um único '-', com '-' das pontas
+# aparados. O mesmo tópico gera SEMPRE o mesmo slug (evita notas duplicadas).
+# Saída VAZIA quando o título não tem nenhum [a-z0-9] ASCII (ex.: "!!!") — quem
+# chama (write-note.sh) trata com falha graciosa, sem criar arquivo espúrio.
+# Newline/CR no título são normalizados para espaço ANTES do sed (que é orientado
+# a linha — sua classe [^a-z0-9] não casa \n, então um título multilinha vazaria o
+# newline para dentro do slug/nome de arquivo); assim o run vira um único '-'.
+# Limitação documentada (deferida, cross-cutting): acentos não são transliterados
+# (á⇒'-'), pois iconv não é POSIX garantido (NFR12); e os ranges de bracket são
+# sensíveis a locale por POSIX — o endurecimento LC_ALL=C fica deferido junto com
+# os guards de charset dos scripts irmãos (toggle-mode.sh/log-phase.sh).
+kolb_slugify() {
+  printf '%s' "${1:-}" | tr '\n\r' '  ' | tr '[:upper:]' '[:lower:]' | \
+    sed -e 's/[^a-z0-9][^a-z0-9]*/-/g' -e 's/^-//' -e 's/-$//'
+}
+
 # Registra uma mensagem de erro em .kolb/runtime/hook-errors.log e NUNCA propaga
 # falha (NFR9). Argumentos: a mensagem de erro. Se o log não puder ser gravado
 # (base ausente ou FS não-gravável — exatamente os casos que o script deve
