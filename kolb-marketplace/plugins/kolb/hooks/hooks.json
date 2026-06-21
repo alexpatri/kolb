@@ -20,6 +20,15 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/scripts/spacing-read.sh"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/capture-commit.sh"
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
