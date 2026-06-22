@@ -1,4 +1,4 @@
-# Kolb — modo aprendizado para o Claude Code
+# Kolb: modo aprendizado para o Claude Code
 
 Kolb põe o Claude Code em **modo aprendizado**: em zonas que você declara, a IA
 deixa de gerar código e passa a **orientar socraticamente e avaliar**, sob o
@@ -19,7 +19,7 @@ Dois princípios fundadores governam tudo:
 
 Para o desenvolvedor que usa IA intensamente e sente que **"não está aprendendo
 nada"** — quer continuar evoluindo de verdade em zonas de aprendizado declaradas,
-em vez de cair na **"ilusão de fluência"** (sentir-se fluente sem reter). O
+em vez de cair na **"ilusão de fluência"**. O
 sentimento tem suporte empírico convergente: METR (jul/2025), Anthropic
 (fev/2026) e Tian Pan (abr/2026) medem o mesmo fenômeno — delegar a geração
 inteira corrói compreensão, retenção e a capacidade de reproduzir o que se
@@ -28,14 +28,20 @@ capacidade afiada onde ela importa.
 
 ## Como começar
 
-1. Adicione o marketplace local e instale o plugin (no Claude Code):
+1. Clone o Repositório:
 
    ```
-   /plugin marketplace add ./kolb-marketplace
+   git clone https://github.com/alexpatri/kolb.git
+   ```
+   
+2. Adicione o marketplace local e instale o plugin (no Claude Code):
+
+   ```
+   /plugin marketplace add ./kolb
    /plugin install kolb@kolb-local
    ```
 
-2. Ative o modo aprendizado na sessão:
+3. Ative o modo aprendizado na sessão:
 
    ```
    /kolb:learn-mode on
@@ -48,15 +54,8 @@ conceito), `/kolb:experiment` (variação para resolver sozinho), além de
 
 > O passo-a-passo completo (pré-requisitos, verificação e o estado `.kolb/` que
 > nasce automaticamente no 1º uso) está em
-> [`plugins/kolb/INSTALL.md`](plugins/kolb/INSTALL.md). O README resume; o
-> INSTALL detalha.
-
+> [`plugins/kolb/INSTALL.md`](plugins/kolb/INSTALL.md). 
 ## Saiba mais
 
-- **Product brief** (o "porquê" completo, com as evidências e o desenho do
-  sistema): [`product-brief-kolb.md`](../_bmad-output/planning-artifacts/product-brief-kolb.md).
-  > Nota: este link relativo funciona no monorepo atual. Se `kolb-marketplace/`
-  > for futuramente extraído como repositório standalone, atualize-o (ou destile
-  > o brief para dentro do repo).
 - **Como flui uma sessão** (transcrição CE → RO → AC → AE de exemplo):
   [`plugins/kolb/templates/sample-run.md`](plugins/kolb/templates/sample-run.md).
