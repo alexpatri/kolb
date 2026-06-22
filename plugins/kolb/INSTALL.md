@@ -34,10 +34,6 @@ Use exatamente estas formas — não há flags nem variações adicionais.
 - Os slash commands `/kolb:*` ficam disponíveis na sessão. Confirme, por
   exemplo, com `/kolb:learn-mode on` (ativa o modo aprendizado) e
   `/kolb:learn-mode off "<motivo>"` (desativa com justificativa).
-- **Opcional:** validar o pacote localmente —
-  `claude plugin validate ./kolb-marketplace/plugins/kolb`. Um warning sobre o
-  `CLAUDE.md` do plugin não ser auto-carregado é **conhecido e esperado** (não é
-  falha).
 
 ## Criação inicial de `.kolb/` (estado do projeto)
 
