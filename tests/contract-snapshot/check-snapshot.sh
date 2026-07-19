@@ -18,7 +18,7 @@
 # DESENHO HÍBRIDO (decisão da story — granularidade do snapshot):
 #   (A) DIGEST DE ARQUIVO INTEIRO para as superfícies de DOCUMENTAÇÃO/TEMPLATE,
 #       onde a auditoria por `git diff` já é fina e qualquer edição é intencional:
-#       CLAUDE.md, agents/tutor.md, as 6 skills/*/SKILL.md e os 5 templates/*.
+#       CLAUDE.md, agents/tutor.md, as 7 skills/*/SKILL.md e os 5 templates/*.
 #       Mudança intencional ⇒ rodar `--update`; o diff do SNAPSHOT.sha256 no git
 #       vira o registro auditável da mudança de contrato (NFR22).
 #   (B) ASSERÇÕES DE CONVERGÊNCIA FONTE↔CÓPIA para as MENSAGENS socráticas/runtime,
@@ -81,6 +81,7 @@ agents/tutor.md
 skills/checkpoint/SKILL.md
 skills/conceptualize/SKILL.md
 skills/experiment/SKILL.md
+skills/help/SKILL.md
 skills/learn-mode/SKILL.md
 skills/pdi-checkin/SKILL.md
 skills/reflect/SKILL.md
