@@ -39,6 +39,14 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/scripts/prompt-steer.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/nudge-cycle.sh"
+          }
+        ]
       }
     ],
     "SessionStart": [
