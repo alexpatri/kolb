@@ -15,14 +15,14 @@ primeiro uso**.
 
 ## Passos (marketplace local)
 
-No Claude Code, a partir da raiz do projeto que contém `kolb-marketplace/`:
+No Claude Code, a partir da raiz do projeto que contém `kolb/`:
 
 ```
-/plugin marketplace add ./kolb-marketplace
+/plugin marketplace add ./kolb
 /plugin install kolb@kolb-local
 ```
 
-1. `/plugin marketplace add ./kolb-marketplace` — registra o marketplace local
+1. `/plugin marketplace add ./kolb` — registra o marketplace local
    (`name: kolb-local`).
 2. `/plugin install kolb@kolb-local` — instala o plugin `kolb` a partir desse
    marketplace.
@@ -34,10 +34,6 @@ Use exatamente estas formas — não há flags nem variações adicionais.
 - Os slash commands `/kolb:*` ficam disponíveis na sessão. Confirme, por
   exemplo, com `/kolb:learn-mode on` (ativa o modo aprendizado) e
   `/kolb:learn-mode off "<motivo>"` (desativa com justificativa).
-- **Opcional:** validar o pacote localmente —
-  `claude plugin validate ./kolb-marketplace/plugins/kolb`. Um warning sobre o
-  `CLAUDE.md` do plugin não ser auto-carregado é **conhecido e esperado** (não é
-  falha).
 
 ## Criação inicial de `.kolb/` (estado do projeto)
 
