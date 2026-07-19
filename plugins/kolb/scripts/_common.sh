@@ -10,13 +10,20 @@
 #   - Falha graciosa: ausência de arquivo nunca é erro; quem chama decide o exit.
 
 # Resolve o diretório de estado durável do projeto (.kolb/ vive aqui).
-# FONTE ÚNICA: CLAUDE_PROJECT_DIR (garantido em hooks; herdado do ambiente do
-# Claude Code numa skill). Sem fallback git/pwd — assim o guard não dispara
-# subprocesso no hot-path (NFR5) e skill e hook resolvem SEMPRE a mesma base
-# (evita que o flag escrito pela skill caia num .kolb/ que o hook não checa).
-# Ausente ⇒ string vazia; quem chama trata com falha graciosa.
+# FONTE PRIMÁRIA: CLAUDE_PROJECT_DIR — o harness do Claude Code a injeta ao rodar
+# HOOKS (hot-path). Numa SKILL o harness NÃO injeta CLAUDE_PROJECT_DIR (só
+# CLAUDE_PLUGIN_ROOT e CLAUDE_CODE_SESSION_ID); por isso o fallback
+# `git rev-parse --show-toplevel` resolve a MESMA base nas skills (cold-path) —
+# no caso normal o toplevel do git == CLAUDE_PROJECT_DIR. NFR5 preservado: em hook
+# a env var está SEMPRE presente ⇒ o ramo git NUNCA dispara no hot-path (kolb_gate).
+# Fora de um repo git ⇒ último recurso `pwd` (o CWD do Bash de skill == dir de
+# lançamento == CLAUDE_PROJECT_DIR no caso normal), cobrindo projetos não-versionados.
 kolb_project_dir() {
-  printf '%s' "${CLAUDE_PROJECT_DIR:-}"
+  if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    printf '%s' "$CLAUDE_PROJECT_DIR"
+  else
+    git rev-parse --show-toplevel 2>/dev/null || pwd
+  fi
 }
 
 # Timestamp ISO 8601 com timezone (NFR19). `date +%z` emite o offset SEM dois-pontos
