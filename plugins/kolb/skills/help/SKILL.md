@@ -28,6 +28,7 @@ os comandos e as 4 fases. Não invente comandos além destes:
 - `/kolb:conceptualize "<título>"` — **AC**: destila UM conceito atômico numa nota reutilizável.
 - `/kolb:experiment` — **AE**: recebe uma variação não-trivial para resolver sem IA.
 - `/kolb:checkpoint [4|8]` — veredito Go/No-Go determinístico das últimas 4/8 semanas.
+- `/kolb:create-pdi` — **cria** o PDI por elicitação socrática (metas na sua formulação).
 - `/kolb:pdi-checkin` — revisa o PDI (metas · evidência · próxima ação) e o mantém vivo.
 - `/kolb:help` — esta ajuda.
 

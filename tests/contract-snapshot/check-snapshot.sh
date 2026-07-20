@@ -80,6 +80,7 @@ CLAUDE.md
 agents/tutor.md
 skills/checkpoint/SKILL.md
 skills/conceptualize/SKILL.md
+skills/create-pdi/SKILL.md
 skills/experiment/SKILL.md
 skills/help/SKILL.md
 skills/learn-mode/SKILL.md
