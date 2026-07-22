@@ -6,10 +6,10 @@
 # momentos) e, sobretudo, DRIFT CRUZADO (uma mensagem socrática hardcoded num script
 # divergir do CLAUDE.md / da transcrição sample-run.md sem ninguém perceber).
 #
-# NÃO É RUNTIME. Vive em kolb-marketplace/tests/ (IRMÃO de plugins/, NÃO sob
-# plugins/kolb/). Nenhum hook/skill/script o lê; não é copiado para .kolb/; não
-# viaja como runtime. Versionado com o marketplace (auditável e V2-friendly).
-# Por estar FORA de plugins/kolb/, não dispara warning no gate `claude plugin
+# NÃO É RUNTIME. Vive em tests/ (IRMÃO de plugin/, NÃO sob
+# plugin/kolb/). Nenhum hook/skill/script o lê; não é copiado para .kolb/; não
+# viaja como runtime. Versionado com o repo do plugin (auditável e V2-friendly).
+# Por estar FORA de plugin/kolb/, não dispara warning no gate `claude plugin
 # validate` (Opção A, AC#1) — a Task 1/Task 6 da story confirmam zero warning novo.
 #
 # SEM DEPENDÊNCIAS (NFR12): POSIX sh + coreutils (sha256sum) + git. JQ-FREE
@@ -59,8 +59,8 @@ usage() {
 # --- Resolução de diretórios (independe do cwd) -----------------------------
 SELF_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd) || {
   printf '%s\n' "check-snapshot: não consegui resolver o diretório do script." >&2; exit 2; }
-PLUGIN_DIR=$(CDPATH= cd -- "$SELF_DIR/../../plugins/kolb" && pwd) || {
-  printf '%s\n' "check-snapshot: não encontrei o plugin em ../../plugins/kolb a partir de $SELF_DIR." >&2; exit 2; }
+PLUGIN_DIR=$(CDPATH= cd -- "$SELF_DIR/../../plugin/kolb" && pwd) || {
+  printf '%s\n' "check-snapshot: não encontrei o plugin em ../../plugin/kolb a partir de $SELF_DIR." >&2; exit 2; }
 MANIFEST="$SELF_DIR/SNAPSHOT.sha256"
 
 # --- Preflight de dependência (NFR12) ---------------------------------------

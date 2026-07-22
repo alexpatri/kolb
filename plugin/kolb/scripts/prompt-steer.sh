@@ -41,7 +41,7 @@ kolb_gate "$input"
 # Modo ATIVO a partir daqui: injeta o contrato + steer no contexto do turno. A
 # string é LITERAL (sem aspas duplas internas ⇒ JSON montável por printf sem
 # escape; o \n separa as 3 linhas DENTRO do valor JSON, mantendo UMA linha no
-# stdout). Substância fiel a plugins/kolb/CLAUDE.md (princípios #1/#2 + vocabulário
+# stdout). Substância fiel a plugin/kolb/CLAUDE.md (princípios #1/#2 + vocabulário
 # FR8); a porção de steer honra o registro de tom (≤3 linhas · termina em pergunta
 # · não revela solução, NFR23). Direcionada à IA (instrução de turno).
 #

@@ -50,7 +50,7 @@ kolb_gate "$input"
 # Modo ATIVO a partir daqui: nega a operação de escrita. A mensagem socrática é
 # LITERAL (sem aspas duplas internas ⇒ JSON montável por printf sem escape; o
 # \n separa as 2 linhas dentro do valor JSON, mantendo UMA única linha no stdout).
-# Critérios de tom honram plugins/kolb/CLAUDE.md (≤3 linhas · direto · termina em
+# Critérios de tom honram plugin/kolb/CLAUDE.md (≤3 linhas · direto · termina em
 # pergunta · não revela a solução, NFR23). Resolve a prioridade NFR23 para
 # bloqueio: comunica o bloqueio + reorienta + termina em pergunta, em 2 linhas.
 #

@@ -1,6 +1,6 @@
 # Instalação do Kolb
 
-O Kolb é instalado como **plugin via marketplace local** do Claude Code. Não há
+O Kolb é instalado como **plugin via marketplace** do Claude Code. Não há
 cópia manual de diretórios nem merge de `settings.json`: os hooks são declarados
 pelo próprio plugin e o estado do projeto (`.kolb/`) nasce **automaticamente no
 primeiro uso**.
@@ -13,18 +13,20 @@ primeiro uso**.
   derrubam a sessão (NFR12 — fail-open), mas as features de runtime não operam
   até instalá-lo.
 
-## Passos (marketplace local)
+## Passos (marketplace)
 
-No Claude Code, a partir da raiz do projeto que contém `kolb/`:
+No Claude Code:
 
 ```
-/plugin marketplace add ./kolb
-/plugin install kolb@kolb-local
+/plugin marketplace add alexpatri/ajs-market
+/plugin install kolb@ajs-market
 ```
 
-1. `/plugin marketplace add ./kolb` — registra o marketplace local
-   (`name: kolb-local`).
-2. `/plugin install kolb@kolb-local` — instala o plugin `kolb` a partir desse
+1. `/plugin marketplace add alexpatri/ajs-market` — registra o marketplace
+   **aj's market** (`name: ajs-market`). Ele referencia este plugin diretamente
+   do repo `alexpatri/kolb` (`source: git-subdir`, `path: plugin/kolb`) — não é
+   preciso clonar nada à mão.
+2. `/plugin install kolb@ajs-market` — instala o plugin `kolb` a partir desse
    marketplace.
 
 Use exatamente estas formas — não há flags nem variações adicionais.

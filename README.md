@@ -28,20 +28,17 @@ capacidade afiada onde ela importa.
 
 ## Como começar
 
-1. Clone o Repositório:
+1. Adicione o marketplace e instale o plugin (no Claude Code):
 
    ```
-   git clone https://github.com/alexpatri/kolb.git
-   ```
-   
-2. Adicione o marketplace local e instale o plugin (no Claude Code):
-
-   ```
-   /plugin marketplace add ./kolb
-   /plugin install kolb@kolb-local
+   /plugin marketplace add alexpatri/ajs-market
+   /plugin install kolb@ajs-market
    ```
 
-3. Ative o modo aprendizado na sessão:
+   Não precisa clonar este repositório — o marketplace referencia o plugin
+   diretamente daqui (`source: git-subdir`).
+
+2. Ative o modo aprendizado na sessão:
 
    ```
    /kolb:learn-mode on
@@ -54,8 +51,8 @@ conceito), `/kolb:experiment` (variação para resolver sozinho), além de
 
 > O passo-a-passo completo (pré-requisitos, verificação e o estado `.kolb/` que
 > nasce automaticamente no 1º uso) está em
-> [`plugins/kolb/INSTALL.md`](plugins/kolb/INSTALL.md). 
+> [`plugin/kolb/INSTALL.md`](plugin/kolb/INSTALL.md). 
 ## Saiba mais
 
 - **Como flui uma sessão** (transcrição CE → RO → AC → AE de exemplo):
-  [`plugins/kolb/templates/sample-run.md`](plugins/kolb/templates/sample-run.md).
+  [`plugin/kolb/templates/sample-run.md`](plugin/kolb/templates/sample-run.md).
